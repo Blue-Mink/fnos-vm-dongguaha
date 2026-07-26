@@ -84,4 +84,4 @@ https://github.com/Blue-Mink/FnDepot
 - [Home Assistant](https://www.home-assistant.io/) — 开源智能家居平台
 - [冬瓜HAOS的由来](https://bbs.hassbian.com/thread-24065-1-1.html)
 - [冬瓜HAOS 镜像包](https://bbs.hassbian.com/thread-23791-1-1.html) — 镜像包下载
-- [RROrg/fn-apps](https://github.com/RROrg/fn-apps/tree/main/fn-vfnOS) — 项目参考
+- [RROrg/fn-apps](https://github.com/RROrg/fn-apps/tree/main/fn-vfnOS) — 项目借鉴及参考
