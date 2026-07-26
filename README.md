@@ -5,7 +5,7 @@
 ![License](https://img.shields.io/badge/license-MIT-green?style=flat-square)
 ![HA](https://img.shields.io/badge/Home%20Assistant-18.0-red?style=flat-square)
 
-> 在 x86 fnOS 系统中创建同架构的 **冬瓜HAOS** 虚拟机，享受 KVM 硬件加速性能。
+> 在 x86 fnOS 系统中创建冬瓜HAOS虚拟机。
 
 ---
 
