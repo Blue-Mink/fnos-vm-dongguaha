@@ -62,13 +62,82 @@
 
 ## 🔨 构建
 
-```bash
-# 解压源码
-tar -xzf app.tgz
+### 环境准备
 
-# 打包
+| 工具 | 版本 | 说明 |
+|------|------|------|
+| fnpack | 最新版 | fnOS FPK 打包工具 |
+| Python | 3.8+ | 用于打包脚本 |
+| tar / gzip | 系统自带 | 用于打包 app.tgz |
+
+> **提示**：推荐在飞牛 NAS 或 Docker 容器中构建，以确保打包规范兼容。
+
+### 构建步骤
+
+1. **克隆仓库**
+
+```bash
+git clone https://github.com/Blue-Mink/fnos-vm-dongguaha.git
+cd fnos-vm-dongguaha
+```
+
+2. **安装 fnpack**
+
+```bash
+# 在飞牛 NAS 上安装
+apt update && apt install -y fnpack
+
+# 或使用 Docker
+docker run --rm -v $(pwd):/work -w /work alpine:latest sh -c "apk add --no-cache fnpack && fnpack build -d . -o dist/com.dongguaha.vm-18.0-fnos-amd64.fpk"
+```
+
+3. **修改 manifest 版本号（可选）**
+
+如需要发布新版本，编辑 `manifest` 文件中的 `version` 字段：
+
+```ini
+version = 18.0
+```
+
+4. **执行打包**
+
+```bash
+# 确保目录结构完整
+ls -la cmd/ config/ wizard/ i18n/ ICON.PNG ICON_256.PNG manifest app.tgz
+
+# 执行打包
 fnpack build -d . -o dist/com.dongguaha.vm-18.0-fnos-amd64.fpk
 ```
+
+5. **验证构建产物**
+
+```bash
+# 检查文件大小（正常约 32KB）
+ls -lh dist/com.dongguaha.vm-18.0-fnos-amd64.fpk
+
+# 查看包内结构
+tar -tzf dist/com.dongguaha.vm-18.0-fnos-amd64.fpk | head -20
+```
+
+### 常见问题
+
+| 问题 | 原因 | 解决 |
+|------|------|------|
+| `fnpack: command not found` | fnpack 未安装 | 在飞牛 NAS 上执行 `apt install fnpack` |
+| `Permission denied` | 目录权限不足 | 使用 `sudo` 或在有写权限目录下构建 |
+| `checksum mismatch` | 文件被篡改 | 重新执行打包，确保 `app.tgz` 未被修改 |
+| `manifest 缺失字段` | manifest 格式错误 | 对照飞牛 FPK 规范检查 manifest 文件 |
+
+### 构建产物说明
+
+打包完成后，`dist/` 目录下会生成：
+
+```
+dist/
+└── com.dongguaha.vm-18.0-fnos-amd64.fpk  # 可直接安装的 FPK 包
+```
+
+可直接在飞牛 NAS 应用中心「从文件安装」测试。
 
 ---
 
