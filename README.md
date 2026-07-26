@@ -10,6 +10,10 @@
 4. VNC中查看虚拟机IP，通过 `http://虚拟机IP:8123` 访问Home Assistant Web UI
 5. 通过 `http://虚拟机IP:8124` 访问冬瓜HAOS伴侣
 
+## 手机端 Home Assistant 客户端
+
+- [Home Assistant for Android (APK)](https://github.com/Blue-Mink/fnos-vm-dongguaha/releases/download/v18.0/Home-Assistant.apk)
+
 ## 系统要求
 
 - fnOS x86_64 系统
