@@ -13,6 +13,7 @@
 ## 手机端 Home Assistant 客户端
 
 - [Home Assistant for Android (APK)](https://github.com/Blue-Mink/fnos-vm-dongguaha/releases/download/v18.0/Home-Assistant.apk)
+- [Home Assistant for Android (Google Play)](https://play.google.com/store/apps/details?id=io.homeassistant.companion.android)
 - [Home Assistant for iOS](https://apps.apple.com/cn/app/home-assistant/id1099568401)
 
 ## 系统要求
