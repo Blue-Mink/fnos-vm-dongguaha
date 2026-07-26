@@ -76,3 +76,12 @@ MIT
 
 [Blue-Mink](https://github.com/Blue-Mink)  
 https://github.com/Blue-Mink/FnDepot
+
+---
+
+## 🙏 鸣谢
+
+- [Home Assistant](https://www.home-assistant.io/) — 开源智能家居平台
+- [冬瓜HAOS](https://bbs.hassbian.com/thread-24065-1-1.html) — 原作者开发的初衷
+- [冬瓜HAOS 镜像包](https://bbs.hassbian.com/thread-23791-1-1.html) — 镜像包下载
+- [RROrg/fn-apps](https://github.com/RROrg/fn-apps/tree/main/fn-vfnOS) — 项目参考
