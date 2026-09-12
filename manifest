@@ -17,5 +17,5 @@ desktop_uidir         = ui
 desktop_applaunchname = com.dongguaha.vm.ha
 icon                  = ICON.PNG
 icon_256              = ICON_256.PNG
-changelog             = 18.2: IP寻踪升级六级发现链（MAC→ARP → VNC横幅OCR直读 → mDNS → domifaddr → 局域网扫描 → 端口探测），虚拟机换IP秒级跟随；新增桌面双图标入口 冬瓜HAOS / Home Assistant，AppCenter数据行平台自动导入+守护兜底；新增36124管理后台反代，自动改写前端UA检测，去除低版本浏览器误报横幅；安装向导支持版本下拉（18.2/18.1/18.0/17.3.1）与CPU/内存/磁盘直通；manifest规范化：platform=x86、service_port/checkport/os_min_version补齐
+changelog             = 18.2: IP寻踪升级六级发现链（MAC→ARP → VNC横幅OCR直读 → mDNS → domifaddr → 局域网扫描 → 端口探测），虚拟机换IP秒级跟随；新增桌面双图标入口 冬瓜HAOS / Home Assistant，AppCenter数据行平台自动导入+守护兜底；新增36124管理后台反代，自动改写前端UA检测，去除低版本浏览器误报横幅；安装向导支持HAOS版本下拉（18.2/18.1/18.0/17.3.1）、内存GB档位（2/3/4/6/8/12/16GB）与CPU/磁盘直通；manifest规范化：platform=x86、service_port/checkport/os_min_version补齐
 checksum              = 2fbdd1790a6099a94dbba601b3d9c6ea

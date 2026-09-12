@@ -20,21 +20,47 @@
         "helpText": "分配给虚拟机的 CPU 核心数（1-16）"
       },
       {
-        "type": "text",
+        "type": "radio",
         "field": "wizard_haos_mem",
-        "label": "内存大小（MB）",
+        "label": "内存大小",
         "initValue": "2048",
+        "options": [
+          {
+            "label": "2 GB（最低要求）",
+            "value": "2048"
+          },
+          {
+            "label": "3 GB",
+            "value": "3072"
+          },
+          {
+            "label": "4 GB（推荐，更流畅）",
+            "value": "4096"
+          },
+          {
+            "label": "6 GB",
+            "value": "6144"
+          },
+          {
+            "label": "8 GB",
+            "value": "8192"
+          },
+          {
+            "label": "12 GB",
+            "value": "12288"
+          },
+          {
+            "label": "16 GB",
+            "value": "16384"
+          }
+        ],
         "rules": [
           {
             "required": true,
-            "message": "请输入内存大小"
-          },
-          {
-            "pattern": "^([1-9][0-9]{3,4}|[1-5][0-9]{4}|6[0-4][0-9]{3}|655[0-2][0-9]|6553[0-6])$",
-            "message": "内存大小（MB）必须在 1024 到 65536 之间"
+            "message": "请选择内存大小"
           }
         ],
-        "helpText": "分配给虚拟机的内存大小（MB），建议 2048 或以上"
+        "helpText": "分配给虚拟机的内存档位；建议 4 GB 更流畅（NAS 至少留有 1 GB 空闲给飞牛系统）。通过 CLI/环境变量安装时可传任意 MB 值（1024~65536）"
       },
       {
         "type": "text",
