@@ -8,7 +8,7 @@ exec 2>>"${TRIM_TEMP_LOGFILE}"
 echo "[$(date)] 冬瓜HAOS install_callback 开始"
 
 # ---- 输入参数 ----
-HAOS_VERSION="${wizard_haos_version:-18.0}"
+HAOS_VERSION="${wizard_haos_version:-18.2}"
 HAOS_CPU="${wizard_haos_cpu:-2}"
 HAOS_MEM="${wizard_haos_mem:-2048}"
 HAOS_DISK="${wizard_haos_disk:-32}"
@@ -39,7 +39,25 @@ fi
 # ---- 架构检测 ----
 case "${ARCH}" in
     x86_64)
-        KNOWN_QCOW2_URL="https://fw.wghaos.com/haos/x86-64-vm/haos_x86-64-vm_cn-18.0.release.20260709_214639.fd913a0968.qcow2.xz"
+        case "${HAOS_VERSION}" in
+            18.2)
+                KNOWN_QCOW2_URL="https://fw.wghaos.com/haos/x86-64-vm/haos_x86-64-vm_cn-18.2.release.20260812_172923.517b83c7db.qcow2.xz"
+                ;;
+            18.1)
+                KNOWN_QCOW2_URL="https://fw.wghaos.com/haos/x86-64-vm/haos_x86-64-vm_cn-18.1.release.20260730_195953.0e63feaaf8.qcow2.xz"
+                ;;
+            18.0)
+                KNOWN_QCOW2_URL="https://fw.wghaos.com/haos/x86-64-vm/haos_x86-64-vm_cn-18.0.release.20260709_214639.fd913a0968.qcow2.xz"
+                ;;
+            17.3.1)
+                KNOWN_QCOW2_URL="https://fw.wghaos.com/haos/x86-64-vm/haos_x86-64-vm_cn-17.3.1.release.20260617_191651.de9faeae3f.qcow2.xz"
+                ;;
+            *)
+                echo "⚠️ 未知版本 ${HAOS_VERSION}（可用: 18.2/18.1/18.0/17.3.1），回退到 18.2"
+                HAOS_VERSION="18.2"
+                KNOWN_QCOW2_URL="https://fw.wghaos.com/haos/x86-64-vm/haos_x86-64-vm_cn-18.2.release.20260812_172923.517b83c7db.qcow2.xz"
+                ;;
+        esac
         QEMU_BIN="qemu-system-x86_64"
         UEFI_CODE="/usr/share/OVMF/OVMF_CODE.fd"
         UEFI_VARS="/usr/share/OVMF/OVMF_VARS.fd"
@@ -199,6 +217,69 @@ if [ "${HAOS_AUTOSTART}" = "true" ]; then
     virsh autostart "${VM_NAME}"
 else
     virsh autostart --disable "${VM_NAME}" 2>/dev/null || true
+fi
+
+# ===== IP 寻踪转发器（应用中心/桌面图标的固定入口） =====
+APP_NAME="com.dongguaha.vm"
+WEB_PORT=36123
+ADMIN_PROXY_PORT=36124
+APP_DIR="${TRIM_PKGDIR:-${TRIM_APPDEST:-/vol1/@appcenter/${APP_NAME}}}"
+[ -f "${APP_DIR}/bin/haos-web-redirect.py" ] || APP_DIR="/var/apps/${APP_NAME}/target"
+[ -f "${APP_DIR}/bin/haos-web-redirect.py" ] || APP_DIR="/var/apps/${APP_NAME}"
+REDIRECT_SCRIPT="${APP_DIR}/bin/haos-web-redirect.py"
+UNIT_FILE="/etc/systemd/system/dongguaha-web.service"
+
+if [ -f "${REDIRECT_SCRIPT}" ]; then
+    cat > "${UNIT_FILE}" <<EOF
+[Unit]
+Description=DongGua HAOS Web Finder (port ${WEB_PORT})
+After=network-online.target libvirtd.service trim_app_center.service
+Wants=network-online.target
+
+[Service]
+Environment=HAOS_WEB_PORT=${WEB_PORT}
+Environment=HAOS_ADMIN_PROXY_PORT=${ADMIN_PROXY_PORT}
+ExecStart=/usr/bin/python3 ${REDIRECT_SCRIPT}
+Restart=always
+RestartSec=3
+StartLimitIntervalSec=0
+
+[Install]
+WantedBy=multi-user.target
+EOF
+    systemctl daemon-reload
+    systemctl enable dongguaha-web >/dev/null 2>&1 || true
+    # 注意：payload 文件部署与回调存在时序差，restart 后必须健康检查，
+    # 否则服务可能仍跑着旧进程/旧代码（表现为功能不生效）
+    ok=0
+    for t in 1 2 3; do
+        systemctl restart dongguaha-web 2>/dev/null || systemctl start dongguaha-web 2>/dev/null || true
+        sleep 2
+        if curl -sf -m 3 "http://127.0.0.1:${WEB_PORT}/healthz" >/dev/null 2>&1; then ok=1; break; fi
+    done
+    [ "$ok" = "1" ] && echo "✅ IP 寻踪已启动并通过健康检查: http://<NAS_IP>:${WEB_PORT}/" \
+                    || echo "⚠️ IP 寻踪健康检查未通过，请在应用中心重启本应用"
+else
+    echo "⚠️ 未找到 ${REDIRECT_SCRIPT}，跳过 IP 寻踪（应用中心按钮将不可用）"
+fi
+
+# ===== 回写 AppCenter：让图标按钮显示「打开」并指向 IP 寻踪 =====
+# 关键时序：install_callback 结束时 AppCenter 才会提交/覆盖该应用的数据行，
+# 回调内直接 UPDATE 会被平台终写冲掉。先立即试一次，再放一个脱离的后台
+# 进程持续校验重写（最长约 6 分钟），直到值在平台上稳定为止。
+if command -v psql >/dev/null 2>&1; then
+    psql -h /var/run/postgresql -d appcenter -U postgres -tAc \
+        "UPDATE app SET service_url='http://' || chr(36) || '{host}:${WEB_PORT}/', status='running', is_stop=true, is_uninstall=true, updated_at=now() WHERE app_name='${APP_NAME}'" \
+        >/dev/null 2>&1 || true
+    SYNC_SCRIPT="${APP_DIR}/bin/dongguaha-db-sync.sh"
+    if [ -f "${SYNC_SCRIPT}" ]; then
+        pkill -f dongguaha-db-sync.sh 2>/dev/null || true
+        HAOS_WEB_PORT="${WEB_PORT}" nohup /bin/sh "${SYNC_SCRIPT}" \
+            >/tmp/dongguaha-db-sync.log 2>&1 </dev/null &
+        echo "✅ AppCenter 回写已转入后台守护（首次约需 1-2 分钟生效）"
+    else
+        echo "⚠️ 缺少 ${SYNC_SCRIPT}，安装后请在应用中心点一次「设置→保存」"
+    fi
 fi
 
 echo "========================================"

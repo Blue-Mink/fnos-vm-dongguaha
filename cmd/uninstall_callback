@@ -4,6 +4,13 @@
 
 echo ">>> 卸载冬瓜HAOS 虚拟机..."
 
+# 清理 IP 寻踪服务与延迟回写守护
+systemctl disable --now dongguaha-web >/dev/null 2>&1 || true
+pkill -f dongguaha-db-sync.sh 2>/dev/null || true
+rm -f /etc/systemd/system/dongguaha-web.service
+systemctl daemon-reload >/dev/null 2>&1 || true
+echo ">>> IP 寻踪服务已移除"
+
 # 停止并删除 libvirt 域
 virsh -c qemu:///system destroy haos 2>/dev/null || true
 virsh -c qemu:///system undefine haos --nvram 2>/dev/null || true

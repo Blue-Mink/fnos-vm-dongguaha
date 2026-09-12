@@ -1,13 +1,21 @@
 #!/bin/bash
-# 状态代理 - 委托给 trim.vm
-VM_NAME="haos"
+# 冬瓜HAOS 应用生命周期入口
+# - start/stop/status 管理「IP 寻踪」转发器（应用中心「打开」按钮的落点）
+# - 虚拟机本身的开机自启由安装向导配置（libvirt autostart），启停也可在「虚拟机」应用操作
+UNIT="dongguaha-web"
+
 case $1 in
-    start|stop)
-        echo "请在「虚拟机」应用中操作"
+    start)
+        systemctl start "$UNIT" 2>/dev/null && echo "IP 寻踪已启动 (入口 36123 / 后台代理 36124)"
+        exit 0
+        ;;
+    stop)
+        systemctl stop "$UNIT" 2>/dev/null
+        echo "IP 寻踪已停止（不影响虚拟机运行）"
         exit 0
         ;;
     status)
-        if virsh domstate "${VM_NAME}" 2>/dev/null | grep -q running; then
+        if systemctl is-active --quiet "$UNIT" 2>/dev/null; then
             exit 0
         else
             exit 3

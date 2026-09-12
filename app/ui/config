@@ -1,0 +1,1 @@
+{".url":{"com.dongguaha.vm.ha":{"title":"冬瓜HAOS","icon":"images/icon_{0}.png","type":"url","protocol":"http","port":"36123","url":"/","allUsers":true},"com.dongguaha.vm.homeassistant":{"title":"Home Assistant","desc":"Home Assistant (VM:8123)","icon":"images/icon_{0}.png","type":"url","protocol":"http","port":"36123","url":"/ha","allUsers":true}}}

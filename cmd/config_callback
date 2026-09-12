@@ -1,6 +1,6 @@
 #!/bin/bash
 # 冬瓜HAOS FPK - 配置后回调
-# 更新 autostart 设置
+# 1) 更新虚拟机开机自启  2) 确保 IP 寻踪在跑  3) 重刷 AppCenter service_url
 
 HAOS_AUTOSTART="${wizard_haos_autostart:-false}"
 
@@ -12,6 +12,60 @@ else
     echo ">>> 关闭开机自启..."
     virsh -c qemu:///system autostart --disable haos
     echo "冬瓜HAOS 开机自启已关闭。"
+fi
+
+# 确保 IP 寻踪在跑且为最新代码（单元丢失时由安装重建即可）
+if systemctl list-unit-files dongguaha-web.service >/dev/null 2>&1; then
+    if ! curl -sf -m 3 "http://127.0.0.1:${WEB_PORT:-36123}/healthz" >/dev/null 2>&1; then
+        systemctl restart dongguaha-web 2>/dev/null || true
+        sleep 2
+    fi
+fi
+
+# 重刷 AppCenter service_url（防止平台升级/重置后按钮丢失）
+APP_NAME="com.dongguaha.vm"
+WEB_PORT=36123
+if command -v psql >/dev/null 2>&1; then
+    psql -h /var/run/postgresql -d appcenter -U postgres -v ON_ERROR_STOP=0 >/dev/null 2>&1 <<SQL || true
+UPDATE app
+   SET service_url='http://' || chr(36) || '{host}:${WEB_PORT}/',
+       is_stop=true,
+       is_uninstall=true,
+       updated_at=now()
+ WHERE app_name='${APP_NAME}';
+UPDATE app_service
+   SET url='http://' || chr(36) || '{host}:${WEB_PORT}/',
+       default_url='http://' || chr(36) || '{host}:${WEB_PORT}/',
+       title='冬瓜HAOS',
+       icon='ui/images/icon_{0}.png',
+       updated_at=now()
+ WHERE app_id=(SELECT id FROM app WHERE app_name='${APP_NAME}' LIMIT 1)
+   AND service_name='com.dongguaha.vm.ha';
+UPDATE app_service
+   SET url='http://' || chr(36) || '{host}:${WEB_PORT}/ha',
+       default_url='http://' || chr(36) || '{host}:${WEB_PORT}/ha',
+       title='Home Assistant',
+       icon='ui/images/icon_{0}.png',
+       updated_at=now()
+ WHERE app_id=(SELECT id FROM app WHERE app_name='${APP_NAME}' LIMIT 1)
+   AND service_name='com.dongguaha.vm.homeassistant';
+INSERT INTO app_service(app_id,service_name,title,"desc",icon,type,url,default_url,is_admin,control,no_display,file_types,created_at,updated_at)
+SELECT a.id,'com.dongguaha.vm.homeassistant','Home Assistant','Home Assistant (VM:8123)','ui/images/icon_{0}.png','url',
+ 'http://' || chr(36) || '{host}:${WEB_PORT}/ha','http://' || chr(36) || '{host}:${WEB_PORT}/ha',false,
+ '{"show":0,"showRoute":0,"auth":0,"port":1,"path":0,"fullUrl":0,"accessPerm":"editable","portPerm":"readonly","pathPerm":"editable","fullUrlPerm":"editable"}',
+ false,'[]',now(),now()
+FROM app a WHERE a.app_name='${APP_NAME}'
+  AND NOT EXISTS (SELECT 1 FROM app_service s WHERE s.app_id=a.id AND s.service_name='com.dongguaha.vm.homeassistant');
+SQL
+    echo "AppCenter service_url 已刷新。"
+    # 平台可能在保存后再终写一次，转后台守护确保稳定生效
+    APP_DIR="${TRIM_PKGDIR:-${TRIM_APPDEST:-/vol1/@appcenter/${APP_NAME}}}"
+    [ -f "${APP_DIR}/bin/dongguaha-db-sync.sh" ] || APP_DIR="/var/apps/${APP_NAME}"
+    if [ -f "${APP_DIR}/bin/dongguaha-db-sync.sh" ]; then
+        pkill -f dongguaha-db-sync.sh 2>/dev/null || true
+        HAOS_WEB_PORT="${WEB_PORT}" nohup /bin/sh "${APP_DIR}/bin/dongguaha-db-sync.sh" \
+            >/tmp/dongguaha-db-sync.log 2>&1 </dev/null &
+    fi
 fi
 
 exit 0

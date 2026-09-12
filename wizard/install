@@ -54,17 +54,35 @@
         "helpText": "扩容后的总磁盘大小（GB），初始镜像约 8GB"
       },
       {
-        "type": "text",
+        "type": "radio",
         "field": "wizard_haos_version",
         "label": "HAOS 版本",
-        "initValue": "18.0",
+        "initValue": "18.2",
+        "options": [
+          {
+            "label": "18.2（最新，推荐）",
+            "value": "18.2"
+          },
+          {
+            "label": "18.1",
+            "value": "18.1"
+          },
+          {
+            "label": "18.0",
+            "value": "18.0"
+          },
+          {
+            "label": "17.3.1",
+            "value": "17.3.1"
+          }
+        ],
         "rules": [
           {
             "required": true,
-            "message": "请输入 HAOS 版本号"
+            "message": "请选择 HAOS 版本"
           }
         ],
-        "helpText": "冬瓜HAOS 版本号，如 18.0、17.2 等"
+        "helpText": "选择要安装的冬瓜HAOS镜像版本；切换版本需卸载重装（保留数据可复用镜像磁盘）。注意：安装完成后首次启动虚拟机时，Home Assistant 需拉取运行镜像，Web 页面可能需 15~40 分钟才就绪（后续开机 2~10 分钟），属正常现象"
       },
       {
         "type": "radio",
