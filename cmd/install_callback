@@ -14,6 +14,18 @@ HAOS_MEM="${wizard_haos_mem:-2048}"
 HAOS_DISK="${wizard_haos_disk:-32}"
 HAOS_AUTOSTART="${wizard_haos_autostart:-false}"
 
+# ---- 按本机物理内存校验内存输入（1024 ~ 物理内存-1536，封顶65536）----
+MEM_TOTAL_MB=$(awk '/MemTotal/{print int($2/1024); exit}' /proc/meminfo)
+MEM_RESERVE_MB=1536
+MEM_MAX_MB=$((MEM_TOTAL_MB - MEM_RESERVE_MB))
+[ "${MEM_MAX_MB}" -gt 65536 ] && MEM_MAX_MB=65536
+case "${HAOS_MEM}" in ''|*[!0-9]*) HAOS_MEM=0 ;; esac
+if [ "${HAOS_MEM}" -lt 1024 ] || [ "${HAOS_MEM}" -gt "${MEM_MAX_MB}" ]; then
+    echo "错误: 内存大小 ${HAOS_MEM}MB 超出允许范围。本机物理内存 ${MEM_TOTAL_MB}MB，需为飞牛系统保留至少 ${MEM_RESERVE_MB}MB，请输入 1024~${MEM_MAX_MB} 之间的整数（MB）" | tee -a "${TRIM_TEMP_LOGFILE}"
+    exit 1
+fi
+echo "内存校验通过: ${HAOS_MEM}MB（本机 ${MEM_TOTAL_MB}MB，允许上限 ${MEM_MAX_MB}MB）"
+
 # ---- 路径与架构 ----
 ARCH=$(uname -m)
 VM_NAME="haos"
