@@ -16,3 +16,7 @@ Thumbs.db
 # SSH
 *.pem
 *.key
+
+# 本地固化存档与产物
+keep/
+dist/
