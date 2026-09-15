@@ -25,8 +25,9 @@
 本仓库只负责 fnOS 侧的封装：向导收参数、下载冬瓜官方镜像、建 libvirt 虚拟机、提供固定入口与桌面图标，并在应用中心里正确响应启停。HAOS 与 Home Assistant 本体由上游发布，本仓库不做修改。
 
 <p align="center">
-  <img src="docs/entry-states.png" width="880" alt="固定入口的三种状态"/><br/>
-  <sub>固定入口 <code>:36123</code> —— 已关机可一键开机 · 启动过程说清卡在哪 · 拿不到 IP 时经串口自救</sub>
+  <img src="docs/entry-states.png" width="880" alt="固定入口的三种状态"/><br>
+  <b>固定入口 <code>:36123</code> 的三种状态</b><br>
+  已关机可一键开机 · 启动过程说清卡在哪 · 拿不到 IP 时经串口自救
 </p>
 
 ## 安装
@@ -151,4 +152,9 @@ fnpack build -d .        # 产出 com.dongguaha.vm.fpk，文件名补上版本�
 
 ---
 
-<p align="center"><sub>Home Assistant 由 [Nabu Casa](https://www.home-assistant.io/) 与社区维护 · 冬瓜HAOS 镜像与优化由 <a href="https://bbs.hassbian.com/thread-24065-1-1.html">冬瓜HA</a> 提供 · 本仓库封装以 MIT 许可发布</sub></p>
+<p align="center">
+  本仓库封装以 <a href="LICENSE">MIT 许可</a>发布<br>
+  Home Assistant 由 <a href="https://www.home-assistant.io/">Nabu Casa</a> 与社区维护<br>
+  冬瓜HAOS 镜像与优化由 <a href="https://bbs.hassbian.com/thread-24065-1-1.html">冬瓜HA</a> 提供<br>
+  镜像与上游本体版权归各自作者所有
+</p>
