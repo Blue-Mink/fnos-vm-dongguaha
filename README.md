@@ -78,7 +78,11 @@
 
 ## 📱 手机端
 
-[Android APK（本仓库 Release 附件）](../../releases/tag/v18.2) · [Google Play](https://play.google.com/store/apps/details?id=io.homeassistant.companion.android) · [App Store](https://apps.apple.com/cn/app/home-assistant/id1099568401)
+| 平台 | 下载 | 说明 |
+|---|---|---|
+| Android (APK) | [下载 APK](https://github.com/Blue-Mink/fnos-vm-dongguaha/releases/download/v18.2/Home-Assistant.apk) | 本地安装包 |
+| Android (Google Play) | [Google Play](https://play.google.com/store/apps/details?id=io.homeassistant.companion.android) | 官方商店 |
+| iOS | [App Store](https://apps.apple.com/cn/app/home-assistant/id1099568401) | 官方商店 |
 
 ## 🔧 从源码构建
 
