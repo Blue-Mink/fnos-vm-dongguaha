@@ -6,7 +6,8 @@ echo ">>> 卸载冬瓜HAOS 虚拟机..."
 
 # 清理 IP 寻踪服务与延迟回写守护
 systemctl disable --now dongguaha-web >/dev/null 2>&1 || true
-pkill -f dongguaha-db-sync.sh 2>/dev/null || true
+# pkill -f 会匹配到自己的命令行导致自杀，用 [d] 断链
+pkill -f 'dongguaha-db[-]sync.sh' 2>/dev/null || true
 rm -f /etc/systemd/system/dongguaha-web.service
 systemctl daemon-reload >/dev/null 2>&1 || true
 echo ">>> IP 寻踪服务已移除"
@@ -28,10 +29,13 @@ if [ "${wizard_data_action:-}" == "delete" ]; then
     fi
     echo "所有数据已删除。"
 else
-    echo "数据已保留。如需完全删除，请手动清理:"
-    echo "  rm -f ${TRIM_DATA_SHARE_PATHS}/haos.qcow2"
-    echo "  rm -f ${TRIM_DATA_SHARE_PATHS}/haos.xml"
-    echo "  rm -f ${TRIM_DATA_SHARE_PATHS}/haos_VARS.fd"
+    # 磁盘在 libvirt 存储池里，卸载不会动它——重装还能接着用同一块盘。
+    echo "数据已保留。虚拟机磁盘位于 libvirt 存储池，卸载不会删除它，重装可继续复用:"
+    echo "  /vol1/vm/pool/haos.qcow2          （当前系统盘，版本标记 /vol1/vm/haos.disk-version）"
+    echo "  /vol1/vm/backup/haos.qcow2.swap-*  （换版本时自动留档的旧盘）"
+    echo "  ${TRIM_DATA_SHARE_PATHS}/haos_VARS.fd（UEFI 变量）"
+    echo "确认要彻底删除虚拟机数据时执行:"
+    echo "  virsh vol-delete --pool vol1 haos.qcow2 && rm -f /vol1/vm/haos.disk-version"
 fi
 
 echo "卸载完成。"
