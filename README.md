@@ -150,11 +150,26 @@ fnpack build -d .        # 产出 com.dongguaha.vm.fpk，文件名补上版本�
 
 `fnpack` 会把 `manifest.checksum` 自动重写成 `app.tgz` 的真实 MD5，无需手工计算。
 
+## 📄 许可证
+
+本项目遵循 [MIT License](LICENSE) 许可证。
+
 ---
 
-<p align="center">
-  本仓库封装以 <a href="LICENSE">MIT 许可</a>发布<br>
-  Home Assistant 由 <a href="https://www.home-assistant.io/">Nabu Casa</a> 与社区维护<br>
-  冬瓜HAOS 镜像与优化由 <a href="https://bbs.hassbian.com/thread-24065-1-1.html">冬瓜HA</a> 提供<br>
-  镜像与上游本体版权归各自作者所有
-</p>
+## 🙏 致谢
+
+- [Home Assistant](https://www.home-assistant.io/) — 开源智能家居平台
+- [冬瓜HAOS 的由来](https://bbs.hassbian.com/thread-24065-1-1.html) — 镜像与优化作者
+- [冬瓜HAOS 镜像包](https://bbs.hassbian.com/thread-23791-1-1.html) — 镜像包下载
+- [RROrg/fn-apps](https://github.com/RROrg/fn-apps/tree/main/fn-vfnOS) — 项目参考
+- [飞牛 fnOS](https://www.fnnas.com/)
+
+---
+
+<div align="center">
+
+**⭐ 如果这个项目对你有帮助，请给个 Star！** ⭐
+
+Made with ❤️ by [Blue-Mink](https://github.com/Blue-Mink)
+
+</div>
