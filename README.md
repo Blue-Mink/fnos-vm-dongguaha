@@ -91,7 +91,7 @@ flowchart LR
 
 ## 支持的系统版本
 
-镜像取自 [`fw.wghaos.com/haos/x86-64-vm/`](https://fw.wghaos.com/haos/x86-64-vm/)，按精确字节数、xz CRC、qcow2 魔数三重把关，不通过就整包重下（不做跨代理续传，避免拼出大小对内容错的混合文件）。
+镜像取自 `fw.wghaos.com/haos/x86-64-vm/`（该目录不提供列表浏览，按精确文件名取；上游发布帖见 [冬瓜HAOS 镜像包](https://bbs.hassbian.com/thread-23791-1-1.html)），按精确字节数、xz CRC、qcow2 魔数三重把关，不通过就整包重下（不做跨代理续传，避免拼出大小对内容错的混合文件）。
 
 | 向导选项 | 大小 | 验证情况 |
 | --- | --- | --- |
@@ -152,7 +152,7 @@ fnpack build -d .        # 产出 com.dongguaha.vm.fpk，文件名补上版本�
 
 ## 📄 许可证
 
-本项目遵循 [MIT License](LICENSE) 许可证。
+本项目遵循 [MIT License](LICENSE) 许可证。本仓库仅为飞牛 fnOS 平台的部署封装，不包含冬瓜HAOS 镜像与 Home Assistant 本体，其版权归各自上游作者所有。
 
 ---
 
@@ -168,7 +168,7 @@ fnpack build -d .        # 产出 com.dongguaha.vm.fpk，文件名补上版本�
 
 <div align="center">
 
-**⭐ 如果这个项目对你有帮助，请给个 Star！** ⭐
+**如果觉得好用，顺手点个 ⭐ Star 支持一下！**
 
 Made with ❤️ by [Blue-Mink](https://github.com/Blue-Mink)
 
